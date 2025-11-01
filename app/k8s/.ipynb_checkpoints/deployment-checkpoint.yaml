@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iris-fastapi
+  labels:
+    app: iris-fastapi
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: iris-fastapi
+  template:
+    metadata:
+      labels:
+        app: iris-fastapi
+    spec:
+      containers:
+        - name: iris-fastapi
+          image: us-central1-docker.pkg.dev/iitmbs-mlops/iris-repo/iris-fastapi:latest
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: iris-fastapi-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: iris-fastapi-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: iris-fastapi
+  ports:
+    - port: 80
+      targetPort: 8000
