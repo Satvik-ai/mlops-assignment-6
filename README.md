@@ -1,83 +1,155 @@
-# Iris Classification ML Model - CI/CD Pipeline
+# 🌸 Iris Classification ML Model — CI/CD Pipeline with FastAPI & Kubernetes
 
-**MLOps - Week 6 - Assignment - 21f1000344**
+This project demonstrates a **production-ready machine learning deployment pipeline** that automates:
 
-## Assignment Objective : 
-- Develop and integrate Continuous Deployment using GitHub Actions for building the IRIS API using docker and deploying onto k8s (kubernetes)
-- Use GitHub workflows/actions to build the docker image using DockerFile
-- Push the image to Google Artifact Registry 
-- Deploy it using Google Kubernetes Engine from GitHub Actions
+- Model training and validation  
+- Continuous Integration (CI)  
+- Containerization with Docker  
+- Continuous Deployment (CD) to Kubernetes  
 
-## Tools Used :
-- Git for code versioing
-- DVC for data versioning
-- MLFlow for model versioning, expermiment tracking and reproducibility
-- GitHub Actions for Continuous Integration and Continuous Deployment
-- FastAPI for serving the model via `/predict/` endpoint
-- Docker for creating image
-- Google Artifact Registry for storing the docker image
-- Google Kubernetes Engine for running the instance of the docker image
-
+The pipeline builds an **Iris classification API** using **FastAPI**, packages it into a Docker image, pushes it to **Google Artifact Registry**, and deploys it to **Google Kubernetes Engine (GKE)** using **GitHub Actions**.
 
 ---
 
-## Files
+## 🎯 Assignment Objective
 
-### 1. `data` folder
-- **Key Utilities:**
-  - Stores `iris.csv` data
-
-### 2. `artifacts` folder
-- **Key Utilities:**
-  - Stores the trained iris classification model
-
-### 3. `src/train.py`
-- **Key Utilities:**
-  - Loads the `iris.csv` 
-  - Trains a `Decision Tree` model
-  - Logs experiment parameters, eval metrics and models utilizing MLFlow
-
-### 4. `tests/test_data_validation.py` and `tests/test_model_evaluation`
-- **Key Utilities:**
-  - Runs unit tests using pytest on data and model
-
-### 5. `requirements.txt`
-- **Key Utilities:**
-  - List of required packages for the Continuous Integration (CI) with GitHub Actions
-
-### 6. `.github/worflows/ci-dev.yml` and `.github/worflows/ci-main.yml`
-- **Key Utilities:**
-  - YAML file for configuring GitHub Actions to perform Continuous Integration (CI)
-  - `ci-dev.yml` perfroms CI for `dev` branch on push and pull request
-  - `ci-main.yml` perfroms CI for `main` branch on push and pull request
-  - On push, CI for the respective branch will be triggered
-  - On pull request, CI for the both the branch be triggered
-  - Fetches the model and data needed for evaluation from DVC
-  - Runs sanity test and prints report as a comment using cml
-
-### 7. `.github/worflows/cd.yml`
-- **Key Utilities:**
-  - YAML file for configuring GitHub Actions to perform Continuous Deploymement (CD)
-  - Gets triggered after a successful CI on main branch
-  - Builds the docker image using DockerFile
-  - Pushes the image to Google Artifact Registry
-  - Deploys the container image of Iris FastAPI application on Google Kubernetes Engine
-
-### 8. `app` folder
-- **Key Utilities:**
-  - Serves as the root directory for deployment
-  - `main.py` :- Loads the model, creates a FastAPI app, and builds a `/predict/` endpoint which accepts a post request with features in the body and serves the predicted classification label
-  - `Dockerfile` :- It is used to create image that spuns out a lightweight Python 3.10 container to run a FastAPI application with its dependencies and model files using Uvicorn on port 8000
-  - `k8s/deployment.yaml` :- Deploys two replicas of the Iris FastAPI application (using the specified container image) and exposes it externally via a LoadBalancer service that maps port 80 to container port 8000
-  - `requirements.txt` :- Contains the list of packages needed for running the main.py. Dockerfile uses it to download the dependencies
-
-### 9. `week6_GA_setup.ipynb`
-- **Key Utilities:**
-  - Created in Vertex AI workbench
-  - Serves as an interface for performing actions local working directory
-  - Setup Git Repository with `dev` and `main` branch
-  - Setup DVC with GCS bucket as remote storage
-  - Created YAML file for GitHub Actions
-  - Pushed the local working directory to remote repo on GitHub
+- Implement Continuous Deployment using GitHub Actions  
+- Build Docker image for Iris API  
+- Push image to Google Artifact Registry  
+- Deploy containerized application on GKE  
+- Maintain reproducible ML workflow using DVC and MLflow  
 
 ---
+
+## 🧰 Tools & Technologies
+
+- **Git** — Code versioning  
+- **DVC** — Data versioning  
+- **MLflow** — Experiment tracking & model registry  
+- **GitHub Actions** — CI/CD automation  
+- **FastAPI** — Model serving API  
+- **Docker** — Containerization  
+- **Google Artifact Registry** — Image storage  
+- **Google Kubernetes Engine (GKE)** — Deployment  
+- **Pytest & CML** — Testing and reporting  
+
+---
+
+## 🗂️ Repository Structure
+
+```
+├── data/ # Dataset tracked with DVC
+│ └── iris.csv
+├── artifacts/ # Trained model artifacts
+├── src/
+│ └── train.py # Training script with MLflow logging
+├── tests/
+│ ├── test_data_validation.py
+│ └── test_model_evaluation.py
+├── app/
+│ ├── main.py # FastAPI app with /predict endpoint
+│ ├── Dockerfile # Container build file
+│ ├── requirements.txt # API dependencies
+│ └── k8s/
+│ └── deployment.yaml # Kubernetes deployment config
+├── .github/workflows/
+│ ├── ci-dev.yml # CI for dev branch
+│ ├── ci-main.yml # CI for main branch
+│ └── cd.yml # Continuous deployment pipeline
+├── requirements.txt # Training dependencies
+├── week6_GA_setup.ipynb # Setup notebook
+└── README.md
+```
+
+---
+
+## 📁 File Details
+
+### 🔹 data/
+Contains `iris.csv` dataset tracked using DVC.
+
+---
+
+### 🔹 artifacts/
+Stores trained model files produced by training pipeline.
+
+---
+
+### 🔹 src/train.py
+
+- Loads dataset  
+- Trains a **Decision Tree classifier**  
+- Logs parameters, metrics, and model to **MLflow**
+
+---
+
+### 🔹 tests/
+
+#### test_data_validation.py
+Validates dataset quality and schema.
+
+#### test_model_evaluation.py
+Ensures model meets performance threshold.
+
+---
+
+### 🔹 GitHub Actions Workflows
+
+#### ci-dev.yml
+Runs CI on **dev branch** pushes and PRs.
+
+#### ci-main.yml
+Runs CI on **main branch** pushes and PRs.
+
+#### cd.yml
+Triggers after successful CI on main branch:
+
+1. Builds Docker image  
+2. Pushes image to Artifact Registry  
+3. Deploys to GKE  
+
+---
+
+### 🔹 app/
+
+#### main.py
+- Loads trained model  
+- Creates FastAPI application  
+- Exposes `/predict/` POST endpoint  
+
+#### Dockerfile
+- Builds lightweight Python container  
+- Installs dependencies  
+- Runs FastAPI using Uvicorn on port 8000  
+
+#### k8s/deployment.yaml
+- Deploys **2 replicas**  
+- Exposes service via **LoadBalancer**  
+- Maps port **80 → 8000**
+
+---
+
+### 🔹 week6_GA_setup.ipynb
+
+Notebook used to:
+
+- Initialize repository  
+- Configure DVC remote  
+- Create GitHub workflows  
+- Push project to GitHub  
+
+---
+
+## 🔄 CI/CD Workflow Overview
+
+1️⃣ Developer pushes code  
+2️⃣ CI pipeline runs tests and validation  
+3️⃣ On successful CI → CD pipeline triggers  
+4️⃣ Docker image built and pushed to registry  
+5️⃣ Kubernetes deploys updated API  
+6️⃣ API becomes accessible via LoadBalancer  
+
+---
+
+## 🎥 Video Presentation  
+[▶️ Click Here](https://drive.google.com/file/d/1B_gxLGtnjpzmZyiAjcSDmVxxZS8zm0Tj/view?usp=drive_link)
